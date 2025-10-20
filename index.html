@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parc automobile – Catalogue distributeurs</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --fond: #0c0f15;
+            --fond-carte: #141922;
+            --fond-header: #0a0c11;
+            --orange: #ff6b00;
+            --orange-clair: #ff8f45;
+            --texte: #f5f7fb;
+            --texte-secondaire: #9ca7c5;
+            --ombre: 0 22px 44px rgba(0, 0, 0, 0.35);
+            --bordure: rgba(255, 255, 255, 0.08);
+        }
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--fond-header);
+            padding: clamp(20px, 5vw, 40px);
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--bordure);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: clamp(12px, 1.5vw, 18px);
+            margin-bottom: 18px;
+        }
+        .header-top img {
+            width: clamp(96px, 22vw, 130px);
+            height: clamp(96px, 22vw, 130px);
+            object-fit: contain;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: clamp(8px, 1.8vw, 12px);
+        }
+        .header-top div {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .header-top h1 {
+            margin: 0;
+            font-size: clamp(1.4rem, 1.8vw + 1rem, 2.05rem);
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+        .header-top p {
+            margin: 0;
+            opacity: 0.8;
+            line-height: 1.5;
+            font-size: clamp(0.86rem, 1vw, 0.95rem);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: clamp(12px, 2vw, 16px);
+            margin-top: 18px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: clamp(16px, 2vw, 20px);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .stat-card span {
+            color: var(--texte-secondaire);
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+        }
+        .stat-card strong {
+            font-size: clamp(1.15rem, 2.6vw, 1.4rem);
+            font-weight: 600;
+            color: var(--orange-clair);
+        }
+
+        main {
+            padding: clamp(16px, 3vw, 28px) clamp(12px, 5vw, 40px) 70px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sticky-filters {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: 12px clamp(16px, 5vw, 32px);
+            margin: -12px auto 18px;
+            max-width: 1280px;
+            width: 100%;
+            background: rgba(12, 15, 21, 0.95);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--bordure);
+        }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(20, 25, 34, 0.95);
+            color: var(--texte);
+            font-size: 0.92rem;
+            transition: border 0.2s ease;
+        }
+        .search-bar input::placeholder { color: rgba(255,255,255,0.45); }
+        .search-bar input:focus {
+            outline: 2px solid rgba(255, 107, 0, 0.45);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: clamp(12px, 2.5vw, 22px);
+            margin: clamp(16px, 4vw, 32px) 0 clamp(18px, 4vw, 36px);
+        }
+
+        .filter-chip {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(24, 29, 40, 0.8);
+            color: var(--texte);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+        }
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .categorie-card {
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            background: #101620;
+            background-image: var(--card-image, none);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: clamp(150px, 24vw, 240px);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            color: #fff;
+            cursor: pointer;
+            padding: clamp(14px, 3vw, 22px);
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .categorie-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, rgba(7, 10, 16, 0.72), rgba(7, 10, 16, 0.32));
+            backdrop-filter: blur(2px);
+            transition: background 0.35s ease, opacity 0.35s ease;
+        }
+        .categorie-card__inner {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .categorie-card__nom {
+            font-size: clamp(1.05rem, 1.1vw + 0.9rem, 1.58rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .categorie-card__count {
+            font-size: clamp(0.82rem, 0.7vw + 0.7rem, 1rem);
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .categorie-card:hover,
+        .categorie-card:focus-visible {
+            transform: translateY(-4px) scale(1.015);
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
+            outline: none;
+        }
+        .categorie-card:hover::before,
+        .categorie-card:focus-visible::before {
+            background: linear-gradient(145deg, rgba(7, 10, 16, 0.58), rgba(7, 10, 16, 0.16));
+        }
+        .categorie-card.active {
+            border-color: rgba(255, 255, 255, 0.45);
+            transform: translateY(-3px) scale(1.012);
+            box-shadow: 0 32px 70px rgba(255, 107, 0, 0.18);
+        }
+        .categorie-card.active::before {
+            background: linear-gradient(145deg, rgba(7, 10, 16, 0.5), rgba(7, 10, 16, 0.12));
+        }
+
+        .skeleton-list {
+            display: grid;
+            gap: 16px;
+        }
+        .skeleton-card {
+            height: clamp(110px, 14vw, 132px);
+            border-radius: 12px;
+            background: linear-gradient(120deg, rgba(28, 33, 45, 0.6), rgba(38, 44, 58, 0.9), rgba(28, 33, 45, 0.6));
+            background-size: 200% 100%;
+            animation: shimmer 1.2s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        .liste-produits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: clamp(14px, 2.2vw, 22px);
+            align-items: stretch;
+        }
+
+        .carte-produit {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            border: 1px solid var(--bordure);
+            padding: clamp(12px, 2.1vw, 16px);
+            display: grid;
+            grid-template-columns: minmax(110px, 150px) 1fr;
+            gap: clamp(12px, 2vw, 16px);
+            align-items: center;
+            box-shadow: var(--ombre);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(12px);
+            height: 100%;
+        }
+        .carte-produit.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .carte-produit:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 26px 48px rgba(0, 0, 0, 0.45);
+        }
+        .carte-produit img {
+            width: 100%;
+            height: clamp(86px, 12vw, 110px);
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .carte-produit .infos {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
+        }
+        .cart-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .cart-top h2 {
+            margin: 0;
+            font-size: clamp(0.96rem, 1vw + 0.8rem, 1.05rem);
+            font-weight: 600;
+        }
+        .badge-stock {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 107, 0, 0.18);
+            color: var(--orange);
+            white-space: nowrap;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            color: var(--texte-secondaire);
+            font-size: 0.78rem;
+        }
+        .meta strong {
+            display: block;
+            color: var(--texte);
+            font-weight: 600;
+        }
+        .prix {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--orange-clair);
+        }
+
+        .indicator {
+            text-align: center;
+            color: var(--texte-secondaire);
+            font-size: 0.9rem;
+            margin-top: 18px;
+        }
+
+        .btn-top {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: var(--orange);
+            color: #101010;
+            font-size: 1.45rem;
+            cursor: pointer;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 120;
+        }
+        .btn-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 7, 12, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            backdrop-filter: blur(14px);
+            z-index: 999;
+        }
+        .modal.ouvert { opacity: 1; visibility: visible; pointer-events: auto; }
+        .modal__contenu {
+            width: min(88vw, 760px);
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #11161f;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 28px 60px rgba(0,0,0,0.6);
+            padding: 24px 26px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .modal__entete {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .modal__entete h3 {
+            margin: 0;
+            font-size: 1.23rem;
+            font-weight: 600;
+        }
+        .modal__close {
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        .modal__close:hover { color: var(--orange); }
+
+        .galerie {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+        }
+        .galerie__btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: var(--orange);
+            font-size: 1.15rem;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+        .galerie__btn:hover { background: rgba(255,255,255,0.18); transform: scale(1.05); }
+        .galerie__viewer {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #0b111a;
+        }
+        .galerie__viewer img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            display: block;
+        }
+        .galerie__viewer figcaption {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 0.82rem;
+        }
+        .miniatures {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .miniature {
+            flex: 0 0 84px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            background: #0e141f;
+            transition: border-color 0.2s ease;
+        }
+        .miniature img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .miniature.active { border-color: var(--orange); }
+
+        .modal__cta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            background: rgba(37, 68, 45, 0.55);
+            border: 1px solid rgba(63, 214, 110, 0.45);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: #d5f5de;
+            font-size: 0.95rem;
+        }
+        .modal__cta-label {
+            font-weight: 600;
+            color: #9cf7b4;
+            letter-spacing: 0.01em;
+        }
+        .modal__cta-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #2ac772;
+            color: #ffffff;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .modal__cta-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(42, 199, 114, 0.38);
+        }
+        .modal__cta-link svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .modal__infos-sup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--texte-secondaire);
+            font-size: 0.85rem;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(3,5,10,0.86);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            z-index: 1200;
+        }
+        .lightbox.ouvert { opacity: 1; visibility: visible; pointer-events: auto; }
+        .lightbox__content {
+            width: 100%;
+            max-width: 960px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+        .lightbox__img-wrapper {
+            background: #05070d;
+            border-radius: 16px;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+        }
+        .lightbox__image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        .lightbox__caption {
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .lightbox__close {
+            position: absolute;
+            top: -16px;
+            right: -16px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--orange);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 960px) {
+            .liste-produits {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            .carte-produit {
+                grid-template-columns: minmax(100px, 140px) 1fr;
+            }
+        }
+
+        /* ---------- Mobile spécifique ---------- */
+        @media (max-width: 720px) {
+            header { padding-bottom: 18px; }
+            .header-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header-top img {
+                width: clamp(106px, 28vw, 124px);
+                height: clamp(106px, 28vw, 124px);
+            }
+            .stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+            .sticky-filters {
+                padding: 10px 16px;
+                margin: -10px auto 16px;
+            }
+            .filters {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 14px;
+                margin: 18px 0 24px;
+            }
+            .categorie-card {
+                min-height: clamp(140px, 40vw, 200px);
+                border-radius: 16px;
+            }
+            .categorie-card__nom {
+                font-size: clamp(1rem, 1vw + 0.85rem, 1.32rem);
+            }
+            .categorie-card__count {
+                font-size: 0.82rem;
+            }
+            .liste-produits { gap: 14px; }
+            .carte-produit {
+                grid-template-columns: 110px 1fr;
+                padding: 12px;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            .carte-produit img {
+                width: 110px;
+                height: 92px;
+                border-radius: 10px;
+            }
+            .cart-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .meta {
+                gap: 6px 12px;
+                font-size: 0.75rem;
+            }
+            .meta strong { font-size: 0.78rem; }
+            .prix { font-size: 0.98rem; }
+            .btn-top { right: 12px; bottom: 12px; }
+
+            .modal__contenu {
+                width: min(94vw, 640px);
+                padding: 20px 18px 24px;
+            }
+            .galerie {
+                grid-template-columns: 32px 1fr 32px;
+                gap: 10px;
+            }
+            .galerie__btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            .galerie__viewer img {
+                max-height: 300px;
+            }
+            .miniature {
+                flex: 0 0 70px;
+                height: 50px;
+            }
+            .modal__cta {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .modal__infos-sup {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { font-size: 14px; }
+            .header-top img {
+                width: 120px;
+                height: 120px;
+            }
+            .filters {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin: 16px 0 22px;
+            }
+            .categorie-card {
+                min-height: clamp(130px, 56vw, 180px);
+            }
+            .carte-produit {
+                grid-template-columns: 100px 1fr;
+                padding: 11px;
+            }
+            .carte-produit img {
+                width: 100px;
+                height: 85px;
+            }
+            .badge-stock { font-size: 0.72rem; }
+            .meta { font-size: 0.72rem; }
+            .prix { font-size: 0.94rem; }
+            .modal__cta {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .modal__cta-link {
+                align-self: center;
+                width: 46px;
+                height: 46px;
+            }
+            .modal__contenu {
+                width: 100%;
+                border-radius: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <img src="https://firebasestorage.googleapis.com/v0/b/mymed-4bad5.appspot.com/o/logo%2F5924803580223671258%20(1).jpg?alt=media&token=9dffa655-eb0b-4a71-95bd-f0f03fcb94f1" alt="Logo entreprise">
+        <div>
+            <h1>Parc automobile – Distributeurs</h1>
+            <p>Inventaire temps réel, optimisé mobile. Retrouvez rapidement les véhicules disponibles, leurs caractéristiques clés et les galeries HD.</p>
+        </div>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <span>Stock total</span>
+            <strong id="stat-stock">—</strong>
+        </div>
+        <div class="stat-card">
+            <span>Modèles actifs</span>
+            <strong id="stat-modeles">—</strong>
+        </div>
+    </div>
+</header>
+
+<div class="sticky-filters">
+    <div class="search-bar">
+        <input type="search" id="input-recherche" placeholder="Recherchez un modèle, une motorisation, une finition…">
+        <button type="button" id="btn-clear" class="filter-chip" style="flex:0 0 auto;">Effacer</button>
+    </div>
+</div>
+
+<main>
+    <section class="filters" id="filters" hidden></section>
+
+    <div class="skeleton-list" id="skeleton-list">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    </div>
+
+    <section class="liste-produits" id="liste-produits" hidden></section>
+    <p class="indicator" id="indicator">Chargement des véhicules…</p>
+</main>
+
+<button class="btn-top" id="btn-top" aria-label="Remonter en haut">&uarr;</button>
+
+<template id="modele-produit">
+    <article class="carte-produit" tabindex="0">
+        <img class="carte-image" src="" alt="" loading="lazy">
+        <div class="infos">
+            <div class="cart-top">
+                <h2 class="carte-nom">Nom</h2>
+                <span class="badge-stock"><span class="stock-val"></span> en stock</span>
+            </div>
+            <div class="meta">
+                <span>Catégorie<strong class="meta-categorie"></strong></span>
+                <span>Finition<strong class="meta-finition"></strong></span>
+                <span>Motorisation<strong class="meta-motorisation"></strong></span>
+                <span>Transmission<strong class="meta-transmission"></strong></span>
+                <span class="meta-couleur-wrapper">Couleur<strong class="meta-couleur"></strong></span>
+                <span class="meta-consommation-wrapper">Conso<strong class="meta-consommation"></strong></span>
+            </div>
+            <div class="prix">—</div>
+        </div>
+    </article>
+</template>
+
+<div class="modal" id="modal-galerie" aria-hidden="true">
+    <div class="modal__contenu" role="dialog" aria-modal="true">
+        <div class="modal__entete">
+            <h3 id="modal-titre">Modèle</h3>
+            <button class="modal__close" type="button" aria-label="Fermer la galerie">&times;</button>
+        </div>
+
+        <div class="galerie">
+            <button class="galerie__btn" type="button" data-direction="prev" aria-label="Photo précédente">&#10094;</button>
+
+            <figure class="galerie__viewer" id="galerie-viewer" title="Ouvrir en plein écran">
+                <img src="" alt="" id="modal-image">
+                <figcaption id="modal-legende">Légende</figcaption>
+            </figure>
+
+            <button class="galerie__btn" type="button" data-direction="next" aria-label="Photo suivante">&#10095;</button>
+        </div>
+
+        <div class="miniatures" id="miniatures"></div>
+
+        <div class="modal__cta">
+            <span class="modal__cta-label">Je prends ce véhicule</span>
+            <a class="modal__cta-link" href="https://wa.me/213541245103?text=Bonjour%2C%20je%20souhaite%20plus%20d'informations%20sur%20ce%20véhicule." target="_blank" rel="noopener" aria-label="Discuter sur WhatsApp">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M16.04 3C9.42 3 4 8.28 4 14.88c0 2.67.87 5.14 2.35 7.18L4.73 29l7.16-1.88a11.4 11.4 0 0 0 4.15.76c6.62 0 12.04-5.28 12.04-11.88C28.08 8.28 22.66 3 16.04 3Zm0 21.16a9.1 9.1 0 0 1-4.34-1.1l-.31-.18-4.25 1.12 1.14-4.12-.2-.32a8.9 8.9 0 0 1-1.39-4.79c0-4.96 4.13-9 9.24-9 5.1 0 9.24 4.04 9.24 9.02 0 4.98-4.14 9.02-9.24 9.02Zm5.2-6.74c-.28-.14-1.65-.82-1.9-.92-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.1-.16.2-.33.21-.62.07-.28-.14-1.2-.44-2.29-1.42-.85-.76-1.43-1.7-1.6-1.98-.17-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.18.04-.34-.02-.48-.07-.14-.64-1.6-.88-2.2-.23-.56-.47-.48-.64-.48-.17 0-.36-.02-.55-.02-.19 0-.5.07-.76.34-.26.28-.99.96-.99 2.34 0 1.38 1.02 2.72 1.16 2.9.14.18 1.99 3.2 4.86 4.46 1.8.78 2.5.84 3.4.7.54-.08 1.65-.68 1.88-1.34.23-.66.23-1.22.16-1.34-.07-.12-.24-.2-.52-.34Z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="modal__infos-sup">
+            <span id="modal-compteur">1 / 1</span>
+            <span><strong>Astuce :</strong> touchez l’image pour l’afficher en plein écran.</span>
+        </div>
+    </div>
+</div>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox__content">
+        <div class="lightbox__img-wrapper">
+            <img src="" alt="" class="lightbox__image" id="lightbox-image">
+            <button class="lightbox__close" type="button" aria-label="Fermer l’image plein écran">&times;</button>
+        </div>
+        <p class="lightbox__caption" id="lightbox-caption"></p>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDcuJcC85PIbSZjcoLSCboialJqTrjaJzQ",
+        authDomain: "mymed-4bad5.firebaseapp.com",
+        databaseURL: "https://mymed-4bad5-default-rtdb.firebaseio.com",
+        projectId: "mymed-4bad5",
+        storageBucket: "mymed-4bad5.appspot.com",
+        messagingSenderId: "205283927162",
+        appId: "1:205283927162:web:4a623b122bb8e4aa6ac7c3",
+        measurementId: "G-R8VFV5QJND"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const autosQuery = query(collection(db, "auto"), orderBy("nom"));
+
+    const statsStock = document.getElementById("stat-stock");
+    const statsModeles = document.getElementById("stat-modeles");
+    const skeletonList = document.getElementById("skeleton-list");
+    const listeProduits = document.getElementById("liste-produits");
+    const indicator = document.getElementById("indicator");
+    const templateCarte = document.getElementById("modele-produit");
+    const btnTop = document.getElementById("btn-top");
+    const inputRecherche = document.getElementById("input-recherche");
+    const btnClear = document.getElementById("btn-clear");
+    const filtersContainer = document.getElementById("filters");
+
+    const modal = document.getElementById("modal-galerie");
+    const modalTitre = document.getElementById("modal-titre");
+    const modalImage = document.getElementById("modal-image");
+    const modalLegende = document.getElementById("modal-legende");
+    const modalCompteur = document.getElementById("modal-compteur");
+    const miniaturesContainer = document.getElementById("miniatures");
+    const boutonFermer = document.querySelector(".modal__close");
+    const boutonsNavigation = document.querySelectorAll(".galerie__btn");
+    const viewer = document.getElementById("galerie-viewer");
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const lightboxClose = document.querySelector(".lightbox__close");
+
+    const PLACEHOLDER_CATEGORIE = "https://via.placeholder.com/1200x800/101620/FFFFFF?text=Cat%C3%A9gorie";
+
+    let catalogue = [];
+    let catalogueFiltre = [];
+    let cataloguePhotos = {};
+    let filtreActif = "Tous";
+    let motCle = "";
+    let produitActif = null;
+    let indexPhoto = 0;
+    let touchStartX = 0;
+    let visuelCategorieTous = "";
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    const lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const img = entry.target;
+            if (entry.isIntersecting) {
+                const src = img.dataset.src;
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute("data-src");
+                }
+                lazyObserver.unobserve(img);
+            }
+        });
+    }, { rootMargin: "160px 0px" });
+
+    const formatPrix = (val) => {
+        if (isNaN(val) || val === null || val === undefined) return "Prix sur demande";
+        return new Intl.NumberFormat("fr-DZ", { style: "currency", currency: "DZD", maximumFractionDigits: 0 }).format(val);
+    };
+
+    const debounce = (fn, delay = 220) => {
+        let timer;
+        return (...args) => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    };
+
+    const purifierUrlFond = (url) => {
+        if (!url || typeof url !== "string") return "";
+        return url.replace(/"/g, "%22").replace(/\(/g, "%28").replace(/\)/g, "%29");
+    };
+
+    const trouverVisuelCategorie = (item) => {
+        if (!item) return "";
+        if (item.logophoto) return item.logophoto;
+        if (item.imagePrincipale) return item.imagePrincipale;
+        if (Array.isArray(item.photos) && item.photos.length) {
+            const firstPhoto = item.photos[0];
+            if (typeof firstPhoto === "string") return firstPhoto;
+            if (firstPhoto?.src) return firstPhoto.src;
+        }
+        return "";
+    };
+
+    function defilerVersCatalogue() {
+        const cible = !listeProduits.hidden ? listeProduits : indicator;
+        if (!cible) return;
+        requestAnimationFrame(() => {
+            const offset = cible.getBoundingClientRect().top + window.pageYOffset - 80;
+            window.scrollTo({ top: Math.max(offset, 0), behavior: "smooth" });
+        });
+    }
+
+    async function chargerLogoTous() {
+        try {
+            const logosSnapshot = await getDocs(collection(db, "logo"));
+            const premierLogo = logosSnapshot.docs[0]?.data();
+            if (premierLogo?.logot) {
+                visuelCategorieTous = premierLogo.logot;
+                if (catalogue.length) {
+                    majFiltres();
+                }
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement du logo général :", error);
+        }
+    }
+
+    function creerCarteCategorie(cle, { label, count, image }) {
+        const carte = document.createElement("button");
+        carte.type = "button";
+        carte.className = "categorie-card";
+        const visuel = purifierUrlFond(image) || PLACEHOLDER_CATEGORIE;
+        carte.style.setProperty("--card-image", `url("${visuel}")`);
+        carte.dataset.filter = cle;
+        carte.setAttribute("aria-label", `${label} – ${count} ${count > 1 ? "modèles" : "modèle"}`);
+        carte.setAttribute("aria-pressed", filtreActif === cle ? "true" : "false");
+        if (filtreActif === cle) {
+            carte.classList.add("active");
+        }
+
+        const inner = document.createElement("span");
+        inner.className = "categorie-card__inner";
+
+        const titre = document.createElement("span");
+        titre.className = "categorie-card__nom";
+        titre.textContent = label;
+
+        const compteur = document.createElement("span");
+        compteur.className = "categorie-card__count";
+        compteur.textContent = `${count} ${count > 1 ? "modèles" : "modèle"}`;
+
+        inner.append(titre, compteur);
+        carte.appendChild(inner);
+
+        carte.addEventListener("click", () => {
+            const changement = filtreActif !== cle;
+            filtreActif = cle;
+            filtrerCatalogue();
+            if (changement) {
+                majFiltres();
+            }
+            defilerVersCatalogue();
+        });
+
+        return carte;
+    }
+
+    function majStats() {
+        const totalStock = catalogue.reduce((acc, item) => acc + (Number(item.stock) || 0), 0);
+        statsStock.textContent = totalStock;
+        statsModeles.textContent = catalogue.length;
+    }
+
+    function majFiltres() {
+        filtersContainer.innerHTML = "";
+        if (!catalogue.length) {
+            filtersContainer.hidden = true;
+            return;
+        }
+        filtersContainer.hidden = false;
+
+        const categories = new Map();
+        let visuelTousLocal = visuelCategorieTous || "";
+
+        catalogue.forEach(item => {
+            const visuel = trouverVisuelCategorie(item);
+            if (!visuelTousLocal && visuel) visuelTousLocal = visuel;
+
+            const categorieBrute = (item.categorie && item.categorie.trim()) || "Autres";
+            if (!categories.has(categorieBrute)) {
+                categories.set(categorieBrute, {
+                    label: categorieBrute,
+                    count: 0,
+                    image: visuel
+                });
+            }
+            const info = categories.get(categorieBrute);
+            info.count += 1;
+            if (!info.image && visuel) info.image = visuel;
+        });
+
+        const imageTous = visuelCategorieTous || visuelTousLocal || PLACEHOLDER_CATEGORIE;
+
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(creerCarteCategorie("Tous", {
+            label: "Tous les véhicules",
+            count: catalogue.length,
+            image: imageTous
+        }));
+
+        Array.from(categories.entries())
+            .sort((a, b) => a[0].localeCompare(b[0], "fr", { sensitivity: "base" }))
+            .forEach(([cle, info]) => {
+                fragment.appendChild(creerCarteCategorie(cle, info));
+            });
+
+        filtersContainer.appendChild(fragment);
+    }
+
+    function genererCarte(item) {
+        const carte = templateCarte.content.cloneNode(true);
+        const article = carte.querySelector(".carte-produit");
+        const image = carte.querySelector(".carte-image");
+        const nom = carte.querySelector(".carte-nom");
+        const stockVal = carte.querySelector(".stock-val");
+        const metaCategorie = carte.querySelector(".meta-categorie");
+        const metaFinition = carte.querySelector(".meta-finition");
+        const metaMotorisation = carte.querySelector(".meta-motorisation");
+        const metaTransmission = carte.querySelector(".meta-transmission");
+        const metaCouleurWrapper = carte.querySelector(".meta-couleur-wrapper");
+        const metaCouleur = carte.querySelector(".meta-couleur");
+        const metaConsoWrapper = carte.querySelector(".meta-consommation-wrapper");
+        const metaConso = carte.querySelector(".meta-consommation");
+        const prix = carte.querySelector(".prix");
+
+        const imageSRC = item.imagePrincipale || (item.photos?.[0]?.src) || "https://via.placeholder.com/600x360?text=Photo+en+cours";
+        image.dataset.src = imageSRC;
+        image.alt = item.nom || "Véhicule";
+        lazyObserver.observe(image);
+
+        nom.textContent = item.nom || "Modèle à définir";
+        stockVal.textContent = item.stock ?? "—";
+        metaCategorie.textContent = item.categorie || "—";
+        metaFinition.textContent = item.finition || "—";
+        metaMotorisation.textContent = item.motorisation || "—";
+        metaTransmission.textContent = item.transmission || "—";
+
+        if (item.couleur) {
+            metaCouleur.textContent = item.couleur;
+        } else {
+            metaCouleurWrapper.style.display = "none";
+        }
+        if (item.consommation) {
+            metaConso.textContent = item.consommation;
+        } else {
+            metaConsoWrapper.style.display = "none";
+        }
+
+        prix.textContent = formatPrix(item.prix);
+
+        article.dataset.produit = item.id;
+        article.addEventListener("click", () => ouvrirModal(item.id));
+        article.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                ouvrirModal(item.id);
+            }
+        });
+
+        observer.observe(article);
+        return carte;
+    }
+
+    function afficherCatalogue() {
+        listeProduits.innerHTML = "";
+        if (!catalogueFiltre.length) {
+            indicator.textContent = "Aucun véhicule ne correspond à votre recherche.";
+            listeProduits.hidden = true;
+            return;
+        }
+        indicator.textContent = "";
+        const frag = document.createDocumentFragment();
+        catalogueFiltre.forEach(item => {
+            frag.appendChild(genererCarte(item));
+        });
+        listeProduits.appendChild(frag);
+        listeProduits.hidden = false;
+    }
+
+    function filtrerCatalogue() {
+        const terme = motCle.trim().toLowerCase();
+        catalogueFiltre = catalogue.filter(item => {
+            const matchFiltre = filtreActif === "Tous" || ((item.categorie || "autres").toLowerCase()) === filtreActif.toLowerCase();
+            if (!matchFiltre) return false;
+            if (!terme) return true;
+            const concat = [
+                item.nom,
+                item.finition,
+                item.motorisation,
+                item.transmission,
+                item.categorie,
+                item.couleur
+            ].map(ch => (ch || "").toLowerCase()).join(" ");
+            return concat.includes(terme);
+        });
+        afficherCatalogue();
+    }
+
+    function majImage() {
+        const photos = cataloguePhotos[produitActif]?.photos || [];
+        const photo = photos[indexPhoto];
+        if (!photo) return;
+        modalImage.src = "";
+        modalImage.src = photo.src;
+        modalImage.alt = `${cataloguePhotos[produitActif].titre} – ${photo.legende}`;
+        modalLegende.textContent = photo.legende;
+        modalCompteur.textContent = `${indexPhoto + 1} / ${photos.length}`;
+        document.querySelectorAll(".miniature").forEach((mini, idx) => {
+            mini.classList.toggle("active", idx === indexPhoto);
+        });
+    }
+
+    function genererMiniatures() {
+        miniaturesContainer.innerHTML = "";
+        const photos = cataloguePhotos[produitActif]?.photos || [];
+        photos.forEach((photo, idx) => {
+            const bouton = document.createElement("button");
+            bouton.className = "miniature";
+            bouton.type = "button";
+            bouton.title = photo.legende;
+            bouton.innerHTML = `<img src="${photo.src}" alt="${photo.legende}">`;
+            bouton.addEventListener("click", () => {
+                indexPhoto = idx;
+                majImage();
+            });
+            miniaturesContainer.appendChild(bouton);
+        });
+    }
+
+    function ouvrirModal(idProduit) {
+        const data = cataloguePhotos[idProduit];
+        if (!data || !data.photos.length) return;
+        produitActif = idProduit;
+        indexPhoto = 0;
+
+        modalTitre.textContent = data.titre;
+        genererMiniatures();
+        majImage();
+
+        modal.classList.add("ouvert");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+    }
+
+    function fermerModal() {
+        modal.classList.remove("ouvert");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        fermerLightbox();
+    }
+
+    function changerImage(direction) {
+        const photos = cataloguePhotos[produitActif]?.photos || [];
+        if (!photos.length) return;
+        indexPhoto = (indexPhoto + direction + photos.length) % photos.length;
+        majImage();
+    }
+
+    function ouvrirLightbox() {
+        const photo = cataloguePhotos[produitActif]?.photos[indexPhoto];
+        if (!photo) return;
+        lightboxImage.src = photo.src;
+        lightboxImage.alt = `${cataloguePhotos[produitActif].titre} – ${photo.legende}`;
+        lightboxCaption.textContent = photo.legende;
+        lightbox.classList.add("ouvert");
+        lightbox.setAttribute("aria-hidden", "false");
+    }
+
+    function fermerLightbox() {
+        lightbox.classList.remove("ouvert");
+        lightbox.setAttribute("aria-hidden", "true");
+    }
+
+    viewer.addEventListener("click", ouvrirLightbox);
+    viewer.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; });
+    viewer.addEventListener("touchend", (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const delta = touchEndX - touchStartX;
+        if (Math.abs(delta) > 40) changerImage(delta < 0 ? 1 : -1);
+    });
+    boutonFermer.addEventListener("click", fermerModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) fermerModal(); });
+    boutonsNavigation.forEach(btn => {
+        btn.addEventListener("click", () => changerImage(btn.dataset.direction === "next" ? 1 : -1));
+    });
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) fermerLightbox(); });
+    lightboxClose.addEventListener("click", fermerLightbox);
+
+    const handleRecherche = debounce((value) => {
+        motCle = value;
+        filtrerCatalogue();
+    }, 180);
+
+    inputRecherche.addEventListener("input", (e) => handleRecherche(e.target.value));
+    btnClear.addEventListener("click", () => {
+        inputRecherche.value = "";
+        motCle = "";
+        filtreActif = "Tous";
+        filtrerCatalogue();
+        majFiltres();
+        defilerVersCatalogue();
+    });
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 320) {
+            btnTop.classList.add("visible");
+        } else {
+            btnTop.classList.remove("visible");
+        }
+    });
+    btnTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    onSnapshot(autosQuery, (snapshot) => {
+        catalogue = snapshot.docs.map(docSnap => ({
+            id: docSnap.id,
+            ...docSnap.data()
+        })).sort((a, b) => {
+            const ordreA = a.ordre ?? Number.MAX_SAFE_INTEGER;
+            const ordreB = b.ordre ?? Number.MAX_SAFE_INTEGER;
+            if (ordreA !== ordreB) return ordreA - ordreB;
+            return (a.nom || "").localeCompare(b.nom || "");
+        });
+
+        cataloguePhotos = catalogue.reduce((acc, item) => {
+            const photos = Array.isArray(item.photos) && item.photos.length
+                ? item.photos.map((photo, idx) => ({
+                    src: photo.src ?? photo,
+                    legende: photo.legende || `${item.nom || "Photo"} – ${idx + 1}`
+                }))
+                : [{
+                    src: item.imagePrincipale ||
+                         item.photos?.[0]?.src ||
+                         "https://via.placeholder.com/1280x720?text=Photo+à+venir",
+                    legende: item.nom || "Aperçu"
+                }];
+            acc[item.id] = {
+                titre: item.nom || "Véhicule",
+                photos
+            };
+            return acc;
+        }, {});
+
+        majStats();
+        filtrerCatalogue();
+        majFiltres();
+
+        if (skeletonList) {
+            skeletonList.remove();
+        }
+        indicator.textContent = catalogue.length ? "" : "Aucun véhicule n’a encore été enregistré.";
+    }, (error) => {
+        console.error("Erreur Firestore :", error);
+        indicator.textContent = "Erreur de chargement du catalogue.";
+        if (skeletonList) skeletonList.remove();
+    });
+
+    chargerLogoTous();
+</script>
+
+</body>
+</html>
